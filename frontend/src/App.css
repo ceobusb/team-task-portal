@@ -513,3 +513,27 @@ select:focus {
   display: flex;
   gap: 10px;
 }
+
+textarea {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  border: 1px solid #d6dfeb;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #14213d;
+  font-size: 17px;
+  outline: none;
+  transition: 0.2s ease;
+  resize: vertical;
+  font-family: inherit;
+}
+
+textarea::placeholder {
+  color: #7b8798;
+}
+
+textarea:focus {
+  border-color: #11998e;
+  box-shadow: 0 0 0 4px rgba(17, 153, 142, 0.12);
+}

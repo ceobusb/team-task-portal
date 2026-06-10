@@ -27,6 +27,11 @@ function App() {
     assignedUserId: "",
   });
 
+  const [projectForm, setProjectForm] = useState({
+    title: "",
+    description: "",
+  });
+
 
   const [taskForm, setTaskForm] = useState({
     title: "",
@@ -50,6 +55,14 @@ function App() {
       [event.target.name]: event.target.value,
     });
   };
+
+  const handleProjectFormChange = (event) => {
+    setProjectForm({
+      ...projectForm,
+      [event.target.name]: event.target.value,
+    });
+  };
+
 
   const handleEditFormChange = (event) => {
     setEditForm({
@@ -168,6 +181,45 @@ function App() {
       setProjects(data.projects);
     } catch (error) {
       setMessage("Projeler alinamadi");
+    }
+  };
+
+  const createProject = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/projects`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: projectForm.title,
+          description: projectForm.description,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || "Proje olusturulamadi");
+        return;
+      }
+
+      setMessage("Proje basariyla olusturuldu");
+
+      setProjectForm({
+        title: "",
+        description: "",
+      });
+
+      getProjects(token);
+      if (currentUser?.role === "MANAGER") {
+        getSummary(token);
+      }
+    } catch (error) {
+      setMessage("Proje olusturulurken hata olustu");
     }
   };
 
@@ -668,6 +720,37 @@ function App() {
                 </form>
               </div>
             )}
+            {currentUser?.role === "MANAGER" && (
+              <div className="panel project-panel">
+                <div className="panel-header">
+                  <div>
+                    <h2>Yeni Proje Ekle</h2>
+                    <p>Manager olarak yeni proje olusturabilirsin.</p>
+                  </div>
+                </div>
+
+                <form className="task-form-grid" onSubmit={createProject}>
+                  <input
+                    type="text"
+                    name="title"
+                    placeholder="Proje basligi"
+                    value={projectForm.title}
+                    onChange={handleProjectFormChange}
+                  />
+
+                  <textarea
+                    name="description"
+                    placeholder="Proje aciklamasi"
+                    value={projectForm.description}
+                    onChange={handleProjectFormChange}
+                    rows="4"
+                  />
+
+                  <button type="submit">Proje Olustur</button>
+                </form>
+              </div>
+            )}
+
             <div className="panel board-panel">
               <div className="panel-header">
                 <div>
