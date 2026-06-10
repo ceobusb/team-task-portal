@@ -81,6 +81,15 @@ const createTask = async (req, res) => {
       },
     });
 
+    const io = getSocketServer();
+
+    if (io) {
+      io.emit("taskCreated", {
+        message: "Yeni task olusturuldu",
+        task: newTask,
+      });
+    }
+
     return res.status(201).json({
       message: "Task basariyla olusturuldu",
       task: newTask,
@@ -194,6 +203,15 @@ const updateTask = async (req, res) => {
       },
     });
 
+    const io = getSocketServer();
+
+    if (io) {
+      io.emit("taskUpdated", {
+        message: "Task guncellendi",
+        task: updatedTask,
+      });
+    }
+
     return res.status(200).json({
       message: "Task basariyla guncellendi",
       task: updatedTask,
@@ -304,6 +322,15 @@ const deleteTask = async (req, res) => {
         id: taskId,
       },
     });
+
+    const io = getSocketServer();
+
+    if (io) {
+      io.emit("taskDeleted", {
+        message: "Task silindi",
+        taskId: taskId,
+      });
+    }
 
     return res.status(200).json({
       message: "Task basariyla silindi",

@@ -47,6 +47,6 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`Server http://127.0.0.1:${PORT} adresinde calisiyor`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server http://0.0.0.0:${PORT} adresinde calisiyor`);
 });
