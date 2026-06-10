@@ -1,4 +1,6 @@
 const prisma = require("../config/prisma");
+const { getSocketServer } = require("../socket");
+
 
 const createTask = async (req, res) => {
   try {
@@ -137,7 +139,6 @@ const getTasks = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const taskId = Number(req.params.id);
-
     const existingTask = await prisma.task.findUnique({
       where: {
         id: taskId,
@@ -260,6 +261,15 @@ const updateTaskStatus = async (req, res) => {
         },
       },
     });
+
+    const io = getSocketServer();
+
+    if (io) {
+      io.emit("taskStatusUpdated", {
+        message: "Task status degisti",
+        task: updatedTask,
+      });
+    }
 
     return res.status(200).json({
       message: "Task status guncellendi",
