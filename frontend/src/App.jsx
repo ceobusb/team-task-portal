@@ -589,8 +589,8 @@ function App() {
     <div className="page">
       <div className="container">
         <div className="hero">
-          <span className="hero-badge">REACT + NODE + PRISMA + SOCKET</span>
-          <h1>Team Task Portal</h1>
+          <span className="hero-badge">REACT + NODE </span>
+          <h1>Team Task Portal aaa</h1>
           <p className="hero-text">
             Ekip içi görev yönetimi, canlı durum güncellemesi ve dashboard takibi.
           </p>
