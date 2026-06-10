@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "./App.css";
+import { API_BASE_URL, SOCKET_URL } from "./config";
 
-const socket = io("http://127.0.0.1:5052");
+const socket = SOCKET_URL ? io(SOCKET_URL) : io();
 
 function App() {
   const [message, setMessage] = useState("Hazir");
@@ -61,7 +62,7 @@ function App() {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +99,7 @@ function App() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/auth/profile", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
         headers: {
           Authorization: `Bearer ${currentToken}`,
         },
@@ -128,7 +129,7 @@ function App() {
     if (!currentToken) return;
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/tasks", {
+      const response = await fetch(`${API_BASE_URL}/api/tasks`, {
         headers: {
           Authorization: `Bearer ${currentToken}`,
         },
@@ -151,7 +152,7 @@ function App() {
     if (!currentToken) return;
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/projects", {
+      const response = await fetch(`${API_BASE_URL}/api/projects`, {
         headers: {
           Authorization: `Bearer ${currentToken}`,
         },
@@ -174,7 +175,7 @@ function App() {
     if (!currentToken) return;
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/dashboard/workload", {
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/workload`, {
         headers: {
           Authorization: `Bearer ${currentToken}`,
         },
@@ -197,7 +198,7 @@ function App() {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/tasks", {
+      const response = await fetch(`${API_BASE_URL}/api/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -261,7 +262,7 @@ function App() {
 
 
     try {
-      const response = await fetch("http://127.0.0.1:5052/api/dashboard/summary", {
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/summary`, {
         headers: {
           Authorization: `Bearer ${currentToken}`,
         },
@@ -282,7 +283,7 @@ function App() {
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:5052/api/tasks/${taskId}/status`,
+        `${API_BASE_URL}/api/tasks/${taskId}/status`,
         {
           method: "PATCH",
           headers: {
@@ -342,7 +343,7 @@ function App() {
 
   const updateTask = async (taskId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5052/api/tasks/${taskId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -381,7 +382,7 @@ function App() {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:5052/api/tasks/${taskId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -425,23 +426,13 @@ function App() {
     }
   }, [token, currentUser]);
 
-  useEffect(() => {
-    if (!token || !currentUser) return;
 
-    if (currentUser.role === "MANAGER") {
-      getSummary(token);
-      getUsers(token);
-    } else {
-      setSummary(null);
-      setUsers([]);
-    }
-  }, [token, currentUser]);
 
-  useEffect(() => {
-    if (!token) {
-      setAuthLoading(false);
-    }
-  }, [token,currentUser]);
+    useEffect(() => {
+      if (!token) {
+        setAuthLoading(false);
+      }
+    }, [token]);
 
   useEffect(() => {
     socket.on("connect", () => {

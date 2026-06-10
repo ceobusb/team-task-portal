@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: team-task-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: team_task_portal
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: team-task-backend
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      PORT: 5052
+      JWT_SECRET: supersecretkey
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/team_task_portal?schema=public
+    ports:
+      - "5052:5052"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: team-task-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  postgres_data:
